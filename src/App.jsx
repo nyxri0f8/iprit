@@ -185,10 +185,14 @@ async function callOpenRouter(prompt){
   try {
     console.log("Calling OpenRouter API...");
     
+    // Get custom Gemini API key from localStorage if available
+    const customApiKey = localStorage.getItem('customGeminiKey');
+    
     const res = await fetch('/api/openrouter/chat', {
       method: "POST",
       headers: { 
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        ...(customApiKey && { "X-Custom-Gemini-Key": customApiKey })
       },
       body: JSON.stringify({
         messages: [
@@ -401,7 +405,7 @@ export default function App() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Login/Register form states
-  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [loginForm, setLoginForm] = useState({ email: "", password: "", geminiApiKey: "" });
   const [registerForm, setRegisterForm] = useState({ 
     name: "", email: "", password: "", confirmPassword: "", 
     department: "", role: "faculty" // institution is set by backend as default
@@ -524,6 +528,14 @@ export default function App() {
         email: loginForm.email,
         password: loginForm.password
       });
+      
+      // Store custom Gemini API key if provided
+      if(loginForm.geminiApiKey && loginForm.geminiApiKey.trim()){
+        localStorage.setItem('customGeminiKey', loginForm.geminiApiKey.trim());
+        setToast("✓ Using your custom Gemini API key!");
+      } else {
+        localStorage.removeItem('customGeminiKey');
+      }
       
       setUser(response.user);
       setIsLoggedIn(true);
@@ -2443,7 +2455,7 @@ Believe in the Possibilities`;
               />
             </div>
             
-            <div style={{marginBottom:20}}>
+            <div style={{marginBottom:16}}>
               <div className="lbl">Password *</div>
               <input 
                 className="inp" 
@@ -2453,6 +2465,20 @@ Believe in the Possibilities`;
                 onChange={e=>setLoginForm(p=>({...p,password:e.target.value}))}
                 required
               />
+            </div>
+            
+            <div style={{marginBottom:20}}>
+              <div className="lbl">Gemini API Key (Optional)</div>
+              <input 
+                className="inp" 
+                type="text" 
+                placeholder="Enter your Gemini API key (leave empty to use default)"
+                value={loginForm.geminiApiKey}
+                onChange={e=>setLoginForm(p=>({...p,geminiApiKey:e.target.value}))}
+              />
+              <div style={{fontSize:11,color:C.muted,marginTop:6}}>
+                💡 Provide your own Gemini API key for AI analysis, or leave empty to use the default key
+              </div>
             </div>
             
             {err&&<div style={{color:C.danger,fontSize:13,marginBottom:16,padding:"10px 14px",background:"rgba(244,67,54,.08)",borderRadius:8,border:"1px solid rgba(244,67,54,.2)"}}>⚠ {err}</div>}

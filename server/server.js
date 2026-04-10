@@ -540,8 +540,19 @@ app.post('/api/openrouter/chat', async (req, res) => {
       return res.status(400).json({ error: 'Messages array is required' });
     }
 
+    // Check for custom Gemini API key in headers
+    const customApiKey = req.headers['x-custom-gemini-key'];
+    const apiKeyToUse = customApiKey || process.env.GEMINI_API_KEY;
+    
+    if (!apiKeyToUse) {
+      return res.status(500).json({ error: 'No Gemini API key available' });
+    }
+
+    // Initialize Gemini with the appropriate API key
+    const genAIInstance = new GoogleGenerativeAI(apiKeyToUse);
+    
     // Call Gemini API with automatic model fallback
-    const geminiResult = await callGeminiAPI(messages);
+    const geminiResult = await callGeminiAPIWithKey(genAIInstance, messages);
     
     console.log(`✅ Gemini API success with model: ${geminiResult.model}`);
     
@@ -551,7 +562,8 @@ app.post('/api/openrouter/chat', async (req, res) => {
       model: geminiResult.model,
       usage: geminiResult.usage,
       modelUsed: geminiResult.model,
-      provider: 'Google Gemini'
+      provider: 'Google Gemini',
+      usingCustomKey: !!customApiKey
     });
 
   } catch (error) {
@@ -573,6 +585,68 @@ app.post('/api/openrouter/chat', async (req, res) => {
     });
   }
 });
+
+// Helper function to call Gemini API with a specific instance
+async function callGeminiAPIWithKey(genAIInstance, messages) {
+  // List of Gemini models to try in order of preference
+  const modelsToTry = [
+    'gemini-2.5-pro',
+    'gemini-2.5-flash',
+    'gemini-2.5-flash-lite', 
+    'gemini-1.5-pro',
+    'gemini-1.5-flash',
+    'gemini-pro'
+  ];
+  
+  let lastError = null;
+  
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`🤖 Trying Gemini model: ${modelName}`);
+      
+      const model = genAIInstance.getGenerativeModel({ model: modelName });
+      
+      // Convert OpenAI format messages to Gemini format
+      const systemMessage = messages.find(m => m.role === 'system')?.content || '';
+      const userMessages = messages.filter(m => m.role === 'user' || m.role === 'assistant');
+      
+      // Combine system message with user content
+      const prompt = systemMessage + '\n\n' + userMessages.map(m => 
+        `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
+      ).join('\n\n');
+      
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      console.log(`✅ Success with Gemini model: ${modelName}`);
+      
+      return {
+        content: text,
+        model: modelName,
+        usage: { total_tokens: text.length } // Approximate
+      };
+      
+    } catch (error) {
+      console.log(`❌ Gemini model ${modelName} failed:`, error.message);
+      lastError = error;
+      
+      // If it's a 404 (model not found), try the next model
+      if (error.status === 404) {
+        console.log(`⏭️ Model ${modelName} not found, trying next model...`);
+        continue;
+      }
+      
+      // For other errors, also try next model
+      console.log(`⏭️ Error with ${modelName}, trying next model...`);
+      continue;
+    }
+  }
+  
+  // If all models failed
+  console.error('❌ All Gemini models failed. Last error:', lastError);
+  throw lastError || new Error('All Gemini models failed');
+}
 
 // Get AI configuration
 app.get('/api/openrouter/config', async (req, res) => {
