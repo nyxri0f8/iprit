@@ -1,0 +1,45 @@
+{
+  "name": "rit-ipr-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "npm run build && cd server && npm start",
+    "deploy": "npm run build && cd server && node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.99.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "js-cookie": "^3.0.5",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
+    "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.11.0",
+    "pdfjs-dist": "^5.5.207",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "serverless-http": "^4.0.0",
+    "tesseract.js": "^7.0.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "vite": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
