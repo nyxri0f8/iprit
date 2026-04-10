@@ -99,8 +99,8 @@ body{background:#f8f9fa;color:#2c3e50;font-family:'Space Grotesk',sans-serif;min
 .inp::placeholder{color:#adb5bd}
 select.inp option{background:#ffffff}
 .lbl{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6c757d;margin-bottom:7px}
-.nav{background:#ffffff;border-bottom:1px solid #dee2e6;box-shadow:0 2px 8px rgba(0,0,0,.05);position:sticky;top:0;z-index:100;padding:0 28px;height:62px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-1px}
+.nav{background:#ffffff;border-bottom:1px solid #dee2e6;box-shadow:0 2px 8px rgba(0,0,0,.05);position:sticky;top:0;z-index:100;padding:0 16px;height:62px;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;overflow:hidden}
+.logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-1px;font-size:18px;white-space:nowrap}
 .mono{font-family:'JetBrains Mono',monospace}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
@@ -130,15 +130,15 @@ select.inp option{background:#ffffff}
 .checkbox-row{display:flex;align-items:center;gap:12px;cursor:pointer}
 .cb{width:20px;height:20px;border-radius:5px;border:2px solid #dee2e6;background:#ffffff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .3s}
 .cb.checked{background:#2B5F8F;border-color:#2B5F8F}
-.step-bar{display:flex;align-items:center;padding:16px 24px;background:#ffffff;border-bottom:1px solid #dee2e6;gap:0;overflow-x:auto}
-.step-item{display:flex;align-items:center;gap:8px;white-space:nowrap}
-.step-sep{width:32px;height:1px;background:#dee2e6;flex-shrink:0;margin:0 6px}
+.step-bar{display:flex;align-items:center;padding:12px 16px;background:#ffffff;border-bottom:1px solid #dee2e6;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.step-item{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:13px}
+.step-sep{width:24px;height:1px;background:#dee2e6;flex-shrink:0;margin:0 4px}
 .sidebar{position:fixed;left:0;top:62px;bottom:0;width:260px;background:#ffffff;border-right:1px solid #dee2e6;padding:20px 0;transition:transform .3s;z-index:50;box-shadow:2px 0 8px rgba(0,0,0,.05)}
 .sidebar.closed{transform:translateX(-100%)}
 .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 24px;color:#6c757d;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;border-left:3px solid transparent}
 .sidebar-item:hover{background:rgba(43,95,143,.05);color:#2B5F8F}
 .sidebar-item.active{background:rgba(43,95,143,.1);color:#2B5F8F;border-left-color:#2B5F8F;font-weight:600}
-.main-content{margin-left:260px;transition:margin-left .3s}
+.main-content{margin-left:260px;transition:margin-left .3s;padding:20px}
 .main-content.full{margin-left:0}
 .upload-zone{border:2px dashed #dee2e6;border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;background:#ffffff}
 .upload-zone:hover{border-color:#2B5F8F;background:rgba(43,95,143,.02)}
@@ -148,7 +148,30 @@ select.inp option{background:#ffffff}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .skel{background:linear-gradient(90deg,#f8f9fa 25%,#e9ecef 50%,#f8f9fa 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
-@media(max-width:768px){.sidebar{width:100%;transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0}}
+@media(max-width:768px){
+  .nav{padding:0 12px;height:auto;min-height:62px;flex-wrap:wrap;gap:8px}
+  .logo{font-size:14px}
+  .sidebar{width:100%;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0;padding:12px}
+  .step-bar{padding:10px 12px;gap:0}
+  .step-item{font-size:11px;gap:4px}
+  .step-sep{width:16px;margin:0 2px}
+  .sdot{width:24px;height:24px;font-size:11px}
+  .btn,.btn-gold{padding:10px 18px;font-size:13px}
+  .ghost{padding:8px 16px;font-size:13px}
+  .rc{padding:16px}
+  .toast{bottom:16px;right:16px;font-size:13px;padding:8px 14px}
+  .g2,.g3{gap:12px}
+}
+@media(max-width:480px){
+  .nav{padding:0 8px}
+  .logo{font-size:12px}
+  .main-content{padding:8px}
+  .step-item{font-size:10px}
+  .btn,.btn-gold{padding:8px 14px;font-size:12px}
+  .rc{padding:12px}
+}
 `;
 
 // ── AI Configuration ──────────────────────────────────
